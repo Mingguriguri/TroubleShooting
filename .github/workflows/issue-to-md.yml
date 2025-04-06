@@ -1,0 +1,40 @@
+name: Convert Closed Issues to Markdown
+
+on:
+  issues:
+    types: [closed]
+
+jobs:
+  convert:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Prepare filename using issue data
+        id: issue
+        run: |
+          CREATED_AT="${{ github.event.issue.created_at }}"
+          DATE=$(echo "$CREATED_AT" | cut -d'T' -f1)
+          ISSUE_TITLE=$(echo "${{ github.event.issue.title }}" | sed 's/ /-/g' | tr -cd '[:alnum:]-')
+          ISSUE_NUMBER=${{ github.event.issue.number }}
+          FILENAME="${DATE}-${ISSUE_NUMBER}-${ISSUE_TITLE}.md"
+          echo "filename=$FILENAME" >> $GITHUB_OUTPUT
+
+      - name: Generate Markdown from Issue
+        uses: varunsridharan/action-issue-to-markdown@v2.0.0
+        with:
+          file_path: "logs"
+          filename: "${{ steps.issue.outputs.filename }}"
+          include_comments: true
+          file_ext: "md"
+          remove_invalid_characters: true
+
+      - name: Commit markdown
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add logs/
+          git commit -m "📝 Issue #${{ github.event.issue.number }} 저장됨"
+          git push
