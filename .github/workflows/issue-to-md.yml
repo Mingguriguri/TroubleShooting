@@ -23,7 +23,7 @@ jobs:
           echo "filename=$FILENAME" >> $GITHUB_OUTPUT
 
       - name: Generate Markdown from Issue
-        uses: varunsridharan/action-issue-to-markdown@v2.0.0
+        uses: varunsridharan/action-issue-to-markdown@v1.0.6
         with:
           file_path: "logs"
           filename: "${{ steps.issue.outputs.filename }}"
