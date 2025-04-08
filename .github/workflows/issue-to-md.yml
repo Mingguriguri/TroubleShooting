@@ -17,7 +17,7 @@ jobs:
         uses: eunjae-lee/issue-to-markdown@v1
         with:
           token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-          dest: 'logs'
+          dest: 'raw-logs'
           extension: '.md'
           inject_title: true
           inject_title_key: 'title'
@@ -30,6 +30,6 @@ jobs:
         run: |
           git config --global user.name "${{ secrets.GIT_USER_NAME }}"
           git config --global user.email "${{ secrets.GIT_USER_EMAIL }}"
-          git add logs/
+          git add raw-logs/
           git commit -m "docs: Convert issue to markdown"
           git push
