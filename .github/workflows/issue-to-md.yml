@@ -25,6 +25,7 @@ jobs:
           inject_created_at_key: 'created_at'
           inject_created_at_format: 'YYYY-MM-DD'
           inject_created_at_as_string: true
+          file_naming: '{created_at}-{number}-{title}'
 
       - name: Check generated markdown files
         run: |
