@@ -26,6 +26,18 @@ jobs:
           inject_created_at_format: 'YYYY-MM-DD'
           inject_created_at_as_string: true
 
+      - name: Check generated markdown files
+        run: |
+          echo "📂 Checking generated markdown files in raw-logs/"
+          FILES=$(ls raw-logs/*.md 2>/dev/null || true)
+      
+          if [ -z "$FILES" ]; then
+            echo "❌ No markdown file created."
+          else
+            echo "✅ Generated markdown file(s):"
+            echo "$FILES"
+          fi
+
       - name: Commit and push changes
         run: |
           git config --global user.name "${{ secrets.GIT_USER_NAME }}"
