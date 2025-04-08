@@ -19,13 +19,14 @@ jobs:
           token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           dest: 'raw-logs'
           extension: '.md'
+          use_custom_path: true
+          use_custom_path_key: 'full_path'
           inject_title: true
           inject_title_key: 'title'
           inject_created_at: true
           inject_created_at_key: 'created_at'
           inject_created_at_format: 'YYYY-MM-DD'
           inject_created_at_as_string: true
-          file_naming: '{created_at}-{number}-{title}'
 
       - name: Check generated markdown files
         run: |
