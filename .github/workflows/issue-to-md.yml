@@ -1,40 +1,35 @@
-name: Convert Closed Issues to Markdown
+name: Convert Issue to Markdown
 
 on:
   issues:
     types: [closed]
 
 jobs:
-  convert:
+  convert_issue:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v3
-
-      - name: Prepare filename using issue data
-        id: issue
-        run: |
-          CREATED_AT="${{ github.event.issue.created_at }}"
-          DATE=$(echo "$CREATED_AT" | cut -d'T' -f1)
-          ISSUE_TITLE=$(echo "${{ github.event.issue.title }}" | sed 's/ /-/g' | tr -cd '[:alnum:]-')
-          ISSUE_NUMBER=${{ github.event.issue.number }}
-          FILENAME="${DATE}-${ISSUE_NUMBER}-${ISSUE_TITLE}.md"
-          echo "filename=$FILENAME" >> $GITHUB_OUTPUT
-
-      - name: Generate Markdown from Issue
-        uses: varunsridharan/action-issue-to-markdown@v1.0.6
         with:
-          file_path: "logs"
-          filename: "${{ steps.issue.outputs.filename }}"
-          include_comments: true
-          file_ext: "md"
-          remove_invalid_characters: true
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 
-      - name: Commit markdown
+      - name: Convert issue to markdown
+        uses: eunjae-lee/issue-to-markdown@v1
+        with:
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          dest: 'logs'
+          extension: '.md'
+          inject_title: true
+          inject_title_key: 'title'
+          inject_created_at: true
+          inject_created_at_key: 'created_at'
+          inject_created_at_format: 'YYYY-MM-DD'
+          inject_created_at_as_string: true
+
+      - name: Commit and push changes
         run: |
-          git config user.name "github-actions"
-          git config user.email "actions@github.com"
+          git config --local user.name 'github-actions'
+          git config --local user.email 'github-actions@github.com'
           git add logs/
-          git commit -m "📝 Issue #${{ github.event.issue.number }} 저장됨"
+          git commit -m "docs: Convert issue to markdown"
           git push
